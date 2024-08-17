@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:meta/meta.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:test_api_app/cache/cache_helper.dart';
 import 'package:test_api_app/core/api/api_consumer.dart';
 import 'package:test_api_app/core/api/end_points.dart';
 import 'package:test_api_app/core/errors/exceptions.dart';
@@ -53,7 +54,8 @@ class UserCubit extends Cubit<UserState> {
       });
       user=SignInModel.fromJson(response);
       final decodedToken = JwtDecoder.decode(user!.token);
-      print(decodedToken['id']);
+      CacheHelper().saveData(key: ApiKey.token,value: user!.token);
+      CacheHelper().saveData(key: ApiKey.id,value: decodedToken[ApiKey.id]);
       emit(SignInSuccess());
     } on ServerException catch (e) {
       emit(SignInFailure(errorMsg: e.errorModel.errorMessage));
