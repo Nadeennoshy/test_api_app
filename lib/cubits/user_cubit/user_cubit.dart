@@ -61,4 +61,9 @@ class UserCubit extends Cubit<UserState> {
       emit(SignInFailure(errorMsg: e.errorModel.errorMessage));
     }
   }
+
+  uploadProfilePic(XFile image){
+    profilePic = image;
+    emit(UploadProfilePicState());
+  }
 }

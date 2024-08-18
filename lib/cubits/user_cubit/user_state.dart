@@ -13,3 +13,6 @@ final class SignInFailure extends UserState {
   
 }
 
+final class UploadProfilePicState extends UserState {}
+
+
