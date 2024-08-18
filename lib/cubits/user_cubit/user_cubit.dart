@@ -9,6 +9,7 @@ import 'package:test_api_app/core/api/end_points.dart';
 import 'package:test_api_app/core/errors/exceptions.dart';
 import 'package:test_api_app/core/functions/upload_image_to_api.dart';
 import 'package:test_api_app/models/sign_in_model.dart';
+import 'package:test_api_app/models/sign_up_model.dart';
 
 part 'user_state.dart';
 
@@ -81,7 +82,8 @@ class UserCubit extends Cubit<UserState> {
             '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
         ApiKey.profilePic = await uploadImageToApi(profilePic!),
       });
-      emit(SignUpSuccessState());
+      final signUpModel = SignInModel.fromJson(response);
+      emit(SignUpSuccessState(message: signUpModel.message));
     } on ServerException catch (e) {
       emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
     }

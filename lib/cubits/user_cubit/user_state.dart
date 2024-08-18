@@ -16,7 +16,11 @@ final class SignInFailureState extends UserState {
 final class UploadProfilePicState extends UserState {}
 
 final class SignUpLoadingState extends UserState {}
-final class SignUpSuccessState extends UserState {}
+final class SignUpSuccessState extends UserState {
+  final String message;
+
+  SignUpSuccessState({required this.message});
+}
 final class SignUpFailureState extends UserState {
   final String errorMsg;
 
