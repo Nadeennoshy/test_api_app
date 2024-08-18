@@ -66,4 +66,17 @@ class UserCubit extends Cubit<UserState> {
     profilePic = image;
     emit(UploadProfilePicState());
   }
+
+  signUp(){
+    api.post(EndPoint.signUp,isFormData: true,
+    data: {
+      ApiKey.name = signUpName.text,
+      ApiKey.email = signUpEmail.text,
+      ApiKey.phone = signUpPhoneNumber.text,
+      ApiKey.password = signUpPassword.text,
+      ApiKey.confirmPassword = signUpConfirmPassword.text,
+      ApiKey.location = '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
+      
+    });
+  }
 }
