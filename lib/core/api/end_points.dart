@@ -19,4 +19,5 @@ class ApiKey{
   static String location = "location";
   static String token = "token";
   static String id = "id";
+  static String profilePic = "profilePic";
 }

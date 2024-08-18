@@ -7,6 +7,7 @@ import 'package:test_api_app/cache/cache_helper.dart';
 import 'package:test_api_app/core/api/api_consumer.dart';
 import 'package:test_api_app/core/api/end_points.dart';
 import 'package:test_api_app/core/errors/exceptions.dart';
+import 'package:test_api_app/core/functions/upload_image_to_api.dart';
 import 'package:test_api_app/models/sign_in_model.dart';
 
 part 'user_state.dart';
@@ -52,31 +53,37 @@ class UserCubit extends Cubit<UserState> {
         ApiKey.email: signInEmail.text,
         ApiKey.password: signInPassword.text,
       });
-      user=SignInModel.fromJson(response);
+      user = SignInModel.fromJson(response);
       final decodedToken = JwtDecoder.decode(user!.token);
-      CacheHelper().saveData(key: ApiKey.token,value: user!.token);
-      CacheHelper().saveData(key: ApiKey.id,value: decodedToken[ApiKey.id]);
+      CacheHelper().saveData(key: ApiKey.token, value: user!.token);
+      CacheHelper().saveData(key: ApiKey.id, value: decodedToken[ApiKey.id]);
       emit(SignInSuccessState());
     } on ServerException catch (e) {
       emit(SignInFailureState(errorMsg: e.errorModel.errorMessage));
     }
   }
 
-  uploadProfilePic(XFile image){
+  uploadProfilePic(XFile image) {
     profilePic = image;
     emit(UploadProfilePicState());
   }
 
-  signUp(){
-    api.post(EndPoint.signUp,isFormData: true,
-    data: {
-      ApiKey.name = signUpName.text,
-      ApiKey.email = signUpEmail.text,
-      ApiKey.phone = signUpPhoneNumber.text,
-      ApiKey.password = signUpPassword.text,
-      ApiKey.confirmPassword = signUpConfirmPassword.text,
-      ApiKey.location = '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
-      
-    });
+  signUp() async {
+    emit(SignUpLoadingState());
+    try {
+      final response = await api.post(EndPoint.signUp, isFormData: true, data: {
+        ApiKey.name = signUpName.text,
+        ApiKey.email = signUpEmail.text,
+        ApiKey.phone = signUpPhoneNumber.text,
+        ApiKey.password = signUpPassword.text,
+        ApiKey.confirmPassword = signUpConfirmPassword.text,
+        ApiKey.location =
+            '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
+        ApiKey.profilePic = await uploadImageToApi(profilePic!),
+      });
+      emit(SignUpSuccessState());
+    } on ServerException catch (e) {
+      emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
+    }
   }
 }
