@@ -3,16 +3,22 @@ part of 'user_cubit.dart';
 @immutable
 sealed class UserState {}
 
-final class UserInitial extends UserState {}
-final class SignInLoading extends UserState {}
-final class SignInSuccess extends UserState {}
-final class SignInFailure extends UserState {
+final class UserInitialState extends UserState {}
+final class SignInLoadingState extends UserState {}
+final class SignInSuccessState extends UserState {}
+final class SignInFailureState extends UserState {
   final String errorMsg;
 
-  SignInFailure({required this.errorMsg});
+  SignInFailureState({required this.errorMsg});
   
 }
 
 final class UploadProfilePicState extends UserState {}
 
+final class SignUpLoadingState extends UserState {}
+final class SignUpSuccessState extends UserState {}
+final class SignUpFailureState extends UserState {
+  final String errorMsg;
 
+  SignUpFailureState({required this.errorMsg});
+}  

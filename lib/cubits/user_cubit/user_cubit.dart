@@ -12,7 +12,7 @@ import 'package:test_api_app/models/sign_in_model.dart';
 part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  UserCubit(this.api) : super(UserInitial());
+  UserCubit(this.api) : super(UserInitialState());
 
   final ApiConsumer api;
   // sign in form key
@@ -47,7 +47,7 @@ class UserCubit extends Cubit<UserState> {
   SignInModel? user;
   signIn() async {
     try {
-      emit(SignInLoading());
+      emit(SignInLoadingState());
       final response = await api.post(EndPoint.signIn, data: {
         ApiKey.email: signInEmail.text,
         ApiKey.password: signInPassword.text,
@@ -56,9 +56,9 @@ class UserCubit extends Cubit<UserState> {
       final decodedToken = JwtDecoder.decode(user!.token);
       CacheHelper().saveData(key: ApiKey.token,value: user!.token);
       CacheHelper().saveData(key: ApiKey.id,value: decodedToken[ApiKey.id]);
-      emit(SignInSuccess());
+      emit(SignInSuccessState());
     } on ServerException catch (e) {
-      emit(SignInFailure(errorMsg: e.errorModel.errorMessage));
+      emit(SignInFailureState(errorMsg: e.errorModel.errorMessage));
     }
   }
 

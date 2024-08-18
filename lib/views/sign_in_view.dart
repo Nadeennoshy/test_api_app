@@ -17,13 +17,13 @@ class SignInView extends StatelessWidget {
     return SafeArea(
         child: BlocConsumer<UserCubit, UserState>(
       listener: (context, state) {
-        if (state is SignInSuccess) {
+        if (state is SignInSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             'Success',
             style: TextStyle(color: Colors.green),
           )));
-        } else if (state is SignInFailure) {
+        } else if (state is SignInFailureState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             'Failure',
@@ -73,7 +73,7 @@ class SignInView extends StatelessWidget {
                           const SizedBox(
                             height: 20,
                           ),
-                          state is SignInLoading
+                          state is SignInLoadingState
                               ? const CircularProgressIndicator()
                               : CustomFormButton(
                                   innerText: 'Sign In',
