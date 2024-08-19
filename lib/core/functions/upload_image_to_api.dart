@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
-Future uploadImageToApi(XFile image) async{
-  return MultipartFile.fromFile(image.path,filename: image.path.split('/').last);
+// Future uploadImageToAPI(XFile image) async {
+//   return MultipartFile.fromFile(image.path,
+//       filename: image.path.split('/').last);
+// }
+
+Future uploadImageToAPI(XFile image) async {
+  return await MultipartFile.fromFile(image.path, filename: image.path.split('/').last);
 }

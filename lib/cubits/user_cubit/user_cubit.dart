@@ -70,22 +70,27 @@ class UserCubit extends Cubit<UserState> {
   }
 
   signUp() async {
-    emit(SignUpLoadingState());
-    try {
-      final response = await api.post(EndPoint.signUp, isFormData: true, data: {
-        ApiKey.name = signUpName.text,
-        ApiKey.email = signUpEmail.text,
-        ApiKey.phone = signUpPhoneNumber.text,
-        ApiKey.password = signUpPassword.text,
-        ApiKey.confirmPassword = signUpConfirmPassword.text,
-        ApiKey.location =
+  emit(SignUpLoadingState());
+  try {
+    final response = await api.post(
+      EndPoint.signUp,
+      isFormData: true,
+      data: {
+        ApiKey.name: signUpName.text,
+        ApiKey.email: signUpEmail.text,
+        ApiKey.phone: signUpPhoneNumber.text,
+        ApiKey.password: signUpPassword.text,
+        ApiKey.confirmPassword: signUpConfirmPassword.text,
+        ApiKey.location:
             '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
-        ApiKey.profilePic = await uploadImageToApi(profilePic!),
-      });
-      final signUpModel = SignInModel.fromJson(response);
-      emit(SignUpSuccessState(message: signUpModel.message));
-    } on ServerException catch (e) {
-      emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
-    }
+        ApiKey.profilePic: await uploadImageToAPI(profilePic!),
+      },
+    );
+    final signUpModel = SignUpModel.fromJson(response);
+    emit(SignUpSuccessState(message: signUpModel.message));
+  } on ServerException catch (e) {
+    emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
   }
+}
+
 }

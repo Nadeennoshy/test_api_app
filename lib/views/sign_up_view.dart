@@ -13,7 +13,16 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
+    return SafeArea(child: BlocConsumer<UserCubit,UserState>(
+      listener: (context,state){
+        if(state is SignUpSuccessState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        }else if(state is SignUpFailureState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMsg)));
+        }
+      },
+      builder: (context,state){
+        return Scaffold(
       backgroundColor: const Color(0xffEEF1F3),
       body: SingleChildScrollView(
         child: Form(
@@ -40,7 +49,11 @@ class SignUpView extends StatelessWidget {
               inDense: true,obscureText: true,suffixIcon: true,
               controller: context.read<UserCubit>().signUpConfirmPassword,),
               const SizedBox(height: 22,),
-              CustomFormButton(innerText: 'Signup', onPressed: (){}),
+              state is SignUpLoadingState?const CircularProgressIndicator(): CustomFormButton(
+                innerText: 'Signup', 
+                onPressed: (){
+                  context.read<UserCubit>().signUp();
+                }),
               const SizedBox(height: 18,),
               const AlreadyHaveAnAccountWidget(),
               const SizedBox(height: 30,),
@@ -48,6 +61,7 @@ class SignUpView extends StatelessWidget {
             ],
           )),
       ),
-    ));
+    );
+      },));
   }
 }
