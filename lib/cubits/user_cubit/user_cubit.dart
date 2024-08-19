@@ -93,7 +93,7 @@ class UserCubit extends Cubit<UserState> {
   }
 }
 
-  getUserProfile(){
-    
+  getUserProfile() async{
+    final response = await api.get(EndPoint.getUserData(CacheHelper().getData(key: ApiKey.id)));
   }
 }

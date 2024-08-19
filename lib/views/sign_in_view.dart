@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_api_app/cubits/user_cubit/user_cubit.dart';
+import 'package:test_api_app/views/profile_view.dart';
 import 'package:test_api_app/widgets/custom_form_button.dart';
 import 'package:test_api_app/widgets/custom_input_field.dart';
 import 'package:test_api_app/widgets/dont_have_an_account.dart';
@@ -23,6 +24,10 @@ class SignInView extends StatelessWidget {
             'Success',
             style: TextStyle(color: Colors.green),
           )));
+          context.read<UserCubit>().getUserProfile();
+           Navigator.push(context, MaterialPageRoute(builder: (context){
+                                      return const ProfileView();
+                                    }));
         } else if (state is SignInFailureState) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
@@ -79,9 +84,7 @@ class SignInView extends StatelessWidget {
                                   innerText: 'Sign In',
                                   onPressed: () {
                                     context.read<UserCubit>().signIn();
-                                    // Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    //   return const ProfileView();
-                                    // }));
+                                   
                                   }),
                           const SizedBox(
                             height: 18,
