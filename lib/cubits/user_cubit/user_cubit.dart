@@ -10,6 +10,7 @@ import 'package:test_api_app/core/errors/exceptions.dart';
 import 'package:test_api_app/core/functions/upload_image_to_api.dart';
 import 'package:test_api_app/models/sign_in_model.dart';
 import 'package:test_api_app/models/sign_up_model.dart';
+import 'package:test_api_app/models/user_model.dart';
 
 part 'user_state.dart';
 
@@ -70,30 +71,39 @@ class UserCubit extends Cubit<UserState> {
   }
 
   signUp() async {
-  emit(SignUpLoadingState());
-  try {
-    final response = await api.post(
-      EndPoint.signUp,
-      isFormData: true,
-      data: {
-        ApiKey.name: signUpName.text,
-        ApiKey.email: signUpEmail.text,
-        ApiKey.phone: signUpPhoneNumber.text,
-        ApiKey.password: signUpPassword.text,
-        ApiKey.confirmPassword: signUpConfirmPassword.text,
-        ApiKey.location:
-            '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
-        ApiKey.profilePic: await uploadImageToAPI(profilePic!),
-      },
-    );
-    final signUpModel = SignUpModel.fromJson(response);
-    emit(SignUpSuccessState(message: signUpModel.message));
-  } on ServerException catch (e) {
-    emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
+    emit(SignUpLoadingState());
+    try {
+      final response = await api.post(
+        EndPoint.signUp,
+        isFormData: true,
+        data: {
+          ApiKey.name: signUpName.text,
+          ApiKey.email: signUpEmail.text,
+          ApiKey.phone: signUpPhoneNumber.text,
+          ApiKey.password: signUpPassword.text,
+          ApiKey.confirmPassword: signUpConfirmPassword.text,
+          ApiKey.location:
+              '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
+          ApiKey.profilePic: await uploadImageToAPI(profilePic!),
+        },
+      );
+      final signUpModel = SignUpModel.fromJson(response);
+      emit(SignUpSuccessState(message: signUpModel.message));
+    } on ServerException catch (e) {
+      emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
+    }
   }
-}
 
-  getUserProfile() async{
-    final response = await api.get(EndPoint.getUserData(CacheHelper().getData(key: ApiKey.id)));
+  getUserProfile() async {
+    try {
+      emit(GetUserLoading());
+      final response = await api
+          .get(EndPoint.getUserDataEndPoint(CacheHelper().getData(key: ApiKey.id)));
+
+          emit(GetUserSuccess(user: UserModel.fromJson(response)));
+        
+    } on ServerException catch (e) {
+      emit(GetUserFailure(errorMsg: e.errorModel.errorMessage));
+    }
   }
 }

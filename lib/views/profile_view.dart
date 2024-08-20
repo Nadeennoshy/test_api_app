@@ -9,7 +9,6 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<UserCubit, UserState>(
       listener: (context, state) {
-
       },
       builder: (context, state) {
         return Scaffold(

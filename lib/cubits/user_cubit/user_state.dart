@@ -26,3 +26,18 @@ final class SignUpFailureState extends UserState {
 
   SignUpFailureState({required this.errorMsg});
 }  
+
+
+final class GetUserLoading extends UserState{}
+
+final class GetUserSuccess extends UserState{
+  final UserModel user;
+
+  GetUserSuccess({required this.user});
+}
+final class GetUserFailure extends UserState{
+  final String errorMsg;
+
+  GetUserFailure({required this.errorMsg});
+}
+

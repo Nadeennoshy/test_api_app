@@ -5,7 +5,7 @@ class EndPoint{
   static String checkEmail = 'user/check-email';
   static String updateUser = 'user/update';
   static String logOut = 'user/logout';
-  static String getUserData(id){
+  static String getUserDataEndPoint(id){
     return "user/get-user/$id";
   }
 }
