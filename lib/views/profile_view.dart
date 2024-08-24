@@ -16,48 +16,52 @@ class ProfileView extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
-          body: state is GetUserLoading? const Center(child: CircularProgressIndicator()): state is GetUserSuccess? ListView(
-            children: [
-              const SizedBox(
-                height: 16,
-              ),
-              CircleAvatar(
-                radius: 80,
-                backgroundImage: NetworkImage(state.user.profilePic),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              ListTile(
-                title: Text(state.user.name),
-                leading: const Icon(Icons.person),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              ListTile(
-                title: Text(state.user.email),
-                leading: const Icon(Icons.email),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              ListTile(
-                title: Text(state.user.phone),
-                leading: const Icon(Icons.phone),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              ListTile(
-                title: Text(state.user.location['type']),
-                leading: const Icon(Icons.location_city),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-            ],
-          ):Container(),
+          body: state is GetUserLoading
+              ? const Center(child: CircularProgressIndicator())
+              : state is GetUserSuccess
+                  ? ListView(
+                      children: [
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        CircleAvatar(
+                          radius: 80,
+                          backgroundImage: NetworkImage(state.user.profilePic),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ListTile(
+                          title: Text(state.user.name),
+                          leading: const Icon(Icons.person),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ListTile(
+                          title: Text(state.user.email),
+                          leading: const Icon(Icons.email),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ListTile(
+                          title: Text(state.user.phone),
+                          leading: const Icon(Icons.phone),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ListTile(
+                          title: Text(state.user.location['type']),
+                          leading: const Icon(Icons.location_city),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                      ],
+                    )
+                  : Container(),
         );
       },
     );
