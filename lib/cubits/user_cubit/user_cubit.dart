@@ -1,23 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:meta/meta.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:test_api_app/cache/cache_helper.dart';
-import 'package:test_api_app/core/api/api_consumer.dart';
-import 'package:test_api_app/core/api/end_points.dart';
-import 'package:test_api_app/core/errors/exceptions.dart';
-import 'package:test_api_app/core/functions/upload_image_to_api.dart';
-import 'package:test_api_app/models/sign_in_model.dart';
-import 'package:test_api_app/models/sign_up_model.dart';
 import 'package:test_api_app/models/user_model.dart';
+import 'package:test_api_app/repositories/user_repository.dart';
 
 part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  UserCubit(this.api) : super(UserInitialState());
+  UserCubit(this.userRepository) : super(UserInitialState());
+  final UserRepository userRepository;
 
-  final ApiConsumer api;
   // sign in form key
   GlobalKey<FormState> signInFormKey = GlobalKey();
 
@@ -47,22 +40,14 @@ class UserCubit extends Cubit<UserState> {
 
   // sign up confirm password
   TextEditingController signUpConfirmPassword = TextEditingController();
-  SignInModel? user;
+
   signIn() async {
-    try {
-      emit(SignInLoadingState());
-      final response = await api.post(EndPoint.signIn, data: {
-        ApiKey.email: signInEmail.text,
-        ApiKey.password: signInPassword.text,
-      });
-      user = SignInModel.fromJson(response);
-      final decodedToken = JwtDecoder.decode(user!.token);
-      CacheHelper().saveData(key: ApiKey.token, value: user!.token);
-      CacheHelper().saveData(key: ApiKey.id, value: decodedToken[ApiKey.id]);
-      emit(SignInSuccessState());
-    } on ServerException catch (e) {
-      emit(SignInFailureState(errorMsg: e.errorModel.errorMessage));
-    }
+    emit(SignInLoadingState());
+    final response = await userRepository.signIn(
+        email: signInEmail.text, password: signInPassword.text);
+
+    response.fold((errorMsg) => emit(SignInFailureState(errorMsg: errorMsg)),
+        (signInModel) => emit(SignInSuccessState()));
   }
 
   uploadProfilePic(XFile image) {
@@ -72,38 +57,23 @@ class UserCubit extends Cubit<UserState> {
 
   signUp() async {
     emit(SignUpLoadingState());
-    try {
-      final response = await api.post(
-        EndPoint.signUp,
-        isFormData: true,
-        data: {
-          ApiKey.name: signUpName.text,
-          ApiKey.email: signUpEmail.text,
-          ApiKey.phone: signUpPhoneNumber.text,
-          ApiKey.password: signUpPassword.text,
-          ApiKey.confirmPassword: signUpConfirmPassword.text,
-          ApiKey.location:
-              '{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
-          ApiKey.profilePic: await uploadImageToAPI(profilePic!),
-        },
-      );
-      final signUpModel = SignUpModel.fromJson(response);
-      emit(SignUpSuccessState(message: signUpModel.message));
-    } on ServerException catch (e) {
-      emit(SignUpFailureState(errorMsg: e.errorModel.errorMessage));
-    }
+    final response = await userRepository.signUp(
+        name: signUpName.text,
+        email: signUpEmail.text,
+        phoneNumber: signUpPhoneNumber.text,
+        password: signUpPassword.text,
+        confimPassword: signUpConfirmPassword.text,
+        profilePic: profilePic!);
+    response.fold(
+        (errorMsg) => emit(SignUpFailureState(errorMsg: errorMsg)),
+        (signUpModel) =>
+            emit(SignUpSuccessState(message: signUpModel.message)));
   }
 
   getUserProfile() async {
-    try {
-      emit(GetUserLoading());
-      final response = await api
-          .get(EndPoint.getUserDataEndPoint(CacheHelper().getData(key: ApiKey.id)));
-
-          emit(GetUserSuccess(user: UserModel.fromJson(response)));
-        
-    } on ServerException catch (e) {
-      emit(GetUserFailure(errorMsg: e.errorModel.errorMessage));
-    }
+    emit(GetUserLoading());
+    final response = await userRepository.getUserProfile();
+    response.fold((errorMsg) => emit(GetUserFailure(errorMsg: errorMsg)),
+        (userModel) => emit(GetUserSuccess(user: userModel)));
   }
 }
